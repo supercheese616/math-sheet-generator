@@ -10,6 +10,7 @@ class HtmlPrinter {
     required double fontSize,
     required double gap,
     required bool includeAnswerKey,
+    required bool showUnderline,
   }) {
     // 辅助函数：生成单页 HTML
     String generateSheet(List<Problem> pageProblems, String pageTitle, bool isAnswer) {
@@ -17,10 +18,10 @@ class HtmlPrinter {
         if (isAnswer) {
           return '<div class="problem answer">${p.fullEquation}</div>';
         } else {
-          // 题目页：使用 CSS 绘制下划线
+          // 题目页
           return '''
             <div class="problem">
-              ${p.expression} = <span class="underline"></span>
+              ${p.expression} = ${showUnderline ? '<span class="underline"></span>' : ''}
             </div>
           ''';
         }

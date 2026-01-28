@@ -43,6 +43,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
   double _fontSize = 32.0;
   double _gap = 32.0;
   bool _includeAnswer = false;
+  bool _printUnderline = true; // 新增开关
   List<Problem> _problems = [];
 
   final TextEditingController _pageController = TextEditingController();
@@ -88,6 +89,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
       fontSize: _fontSize,
       gap: _gap,
       includeAnswerKey: _includeAnswer,
+      showUnderline: _printUnderline,
     );
 
     // 打开新窗口打印
@@ -259,6 +261,13 @@ class _GeneratorPageState extends State<GeneratorPage> {
                   contentPadding: EdgeInsets.zero,
                 ),
 
+                SwitchListTile(
+                  title: const Text("打印填空横线"),
+                  value: _printUnderline,
+                  onChanged: (v) => setState(() => _printUnderline = v),
+                  contentPadding: EdgeInsets.zero,
+                ),
+
                 const SizedBox(height: 30),
                 SizedBox(
                   height: 50,
@@ -341,25 +350,9 @@ class _GeneratorPageState extends State<GeneratorPage> {
                                 children: pageProblems.map((p) {
                                   return SizedBox(
                                     width: (210 * 3.78 - 100 - 40) / 3 - 1,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                                      textBaseline: TextBaseline.alphabetic,
-                                      children: [
-                                        Text(
-                                          "${p.expression} = ",
-                                          style: TextStyle(fontSize: _fontSize, fontFamily: "serif"),
-                                        ),
-                                        // 模拟下划线
-                                        Expanded(
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 20), // 右侧留点白
-                                      ],
+                                    child: Text(
+                                      "${p.expression} =",
+                                      style: TextStyle(fontSize: _fontSize, fontFamily: "serif"),
                                     ),
                                   );
                                 }).toList(),
