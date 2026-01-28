@@ -341,9 +341,25 @@ class _GeneratorPageState extends State<GeneratorPage> {
                                 children: pageProblems.map((p) {
                                   return SizedBox(
                                     width: (210 * 3.78 - 100 - 40) / 3 - 1,
-                                    child: Text(
-                                      p.equation,
-                                      style: TextStyle(fontSize: _fontSize, fontFamily: "serif"),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text(
+                                          "${p.expression} = ",
+                                          style: TextStyle(fontSize: _fontSize, fontFamily: "serif"),
+                                        ),
+                                        // 模拟下划线
+                                        Expanded(
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20), // 右侧留点白
+                                      ],
                                     ),
                                   );
                                 }).toList(),

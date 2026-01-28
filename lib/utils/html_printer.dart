@@ -13,9 +13,18 @@ class HtmlPrinter {
   }) {
     // 辅助函数：生成单页 HTML
     String generateSheet(List<Problem> pageProblems, String pageTitle, bool isAnswer) {
-      final contentHtml = pageProblems.map((p) => 
-        '<div class="problem ${isAnswer ? "answer" : ""}">${isAnswer ? p.fullEquation : p.equation}</div>'
-      ).join('');
+      final contentHtml = pageProblems.map((p) {
+        if (isAnswer) {
+          return '<div class="problem answer">${p.fullEquation}</div>';
+        } else {
+          // 题目页：使用 CSS 绘制下划线
+          return '''
+            <div class="problem">
+              ${p.expression} = <span class="underline"></span>
+            </div>
+          ''';
+        }
+      }).join('');
 
       return '''
       <div class="sheet ${isAnswer ? 'answer-key' : ''}">
@@ -148,8 +157,16 @@ class HtmlPrinter {
     .problem {
       font-size: ${fontSize}px;
       display: flex;
-      align-items: center;
+      align-items: baseline; /* 基线对齐，确保下划线位置正确 */
       white-space: nowrap;
+    }
+
+    .underline {
+      display: inline-block;
+      width: ${fontSize * 2.5}px; /* 根据字号自适应宽度 */
+      border-bottom: 2px solid #000;
+      margin-left: 5px;
+      height: 10px; /* 占位高度，不影响显示，只为了撑开 */
     }
 
     .answer-key .problem {
