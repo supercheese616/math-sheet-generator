@@ -274,7 +274,7 @@ button {
 
 .button-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 
@@ -469,5 +469,74 @@ button {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  :root,
+  body,
+  .app-shell {
+    background: #fff !important;
+  }
+
+  body {
+    min-width: 0;
+    color: #111827;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .topbar,
+  .control-panel,
+  .preview-header {
+    display: none !important;
+  }
+
+  .tool-layout,
+  .preview-area,
+  .sheet-stack {
+    display: block;
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
+  }
+
+  .sheet-frame {
+    width: auto !important;
+    height: auto !important;
+    max-width: none;
+  }
+
+  .sheet-preview {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0;
+    padding: 15mm;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+    transform: none;
+    transform-origin: initial;
+  }
+
+  .sheet-frame:last-child .sheet-preview {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .sheet-title h2 {
+    font-size: 24px;
+  }
+
+  .sheet-meta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
   }
 }

@@ -5,6 +5,7 @@
 - 技术栈：react-ts（React + Vite + TypeScript）；轻量主屏应用（manifest / apple-touch-icon，无 service worker）；是否用 PocketBase：否。
 - 原型：① 纯静态。
 - 部署：SPA 是（`new-app.sh math-sheet` 默认 `try_files {path} /index.html`）；构建为 `npm run build`，产物在 `dist/`，无特殊步骤。
+- 打印：唯一打印按钮直接调用当前页面 `window.print()`；`@media print` 隐藏控制区，只输出当前预览的 A4 题目页 / 答案页，不再生成独立打印页面。
 
 ## PocketBase 集合（数据模型真源）
 

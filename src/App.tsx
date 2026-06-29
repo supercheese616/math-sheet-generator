@@ -19,7 +19,6 @@ import {
   pageCountForProblems,
   splitIntoPages,
 } from "./math";
-import { buildPrintableHtml } from "./print";
 import type { MathGenerator, Problem, SheetSettings } from "./types";
 
 const initialGenerator = generators[0];
@@ -82,20 +81,7 @@ function App() {
   };
 
   const printSheet = () => {
-    const html = buildPrintableHtml(generator.name, problems, settings);
-    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const printWindow = window.open(url, "_blank", "noopener,noreferrer");
-
-    if (!printWindow) {
-      const link = document.createElement("a");
-      link.href = url;
-      link.target = "_blank";
-      link.rel = "noreferrer";
-      link.click();
-    }
-
-    window.setTimeout(() => URL.revokeObjectURL(url), 10000);
+    window.print();
   };
 
   return (
@@ -116,7 +102,7 @@ function App() {
           </button>
           <button className="primary-button" type="button" onClick={printSheet}>
             <Printer size={20} />
-            生成打印页
+            打印
           </button>
         </div>
       </header>
@@ -245,10 +231,6 @@ function App() {
                 <RefreshCcw size={18} />
                 刷新题目
               </button>
-              <button type="button" className="strong" onClick={printSheet}>
-                <Printer size={18} />
-                打印 / PDF
-              </button>
             </div>
           </section>
         </aside>
@@ -262,10 +244,6 @@ function App() {
                 {settings.includeAnswerKey ? ` + ${pages.length} 页参考答案` : ""}，每页 {itemsPerPage} 题。
               </p>
             </div>
-            <button type="button" onClick={printSheet}>
-              <Printer size={18} />
-              打印
-            </button>
           </div>
 
           <div className="sheet-stack">
