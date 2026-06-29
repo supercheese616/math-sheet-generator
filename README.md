@@ -1,16 +1,25 @@
-# math_sheet_gen
+# 算术题打印生成器
 
-A new Flutter project.
+Family Apps 中的纯静态小应用，用于快速生成 A4 口算练习题和参考答案页。
 
-## Getting Started
+## 功能
 
-This project is a starting point for a Flutter application.
+- 6 类题型：20 以内加法、20 以内加减混合、100 以内不退位减法、100 以内加减混合、9x9 乘法、表内整除。
+- 页数和题数联动，每页固定 45 题，最多 990 题。
+- 可调整字号、行间距、是否显示填空横线、是否附带参考答案页。
+- 生成独立打印页，可直接打印或存为 PDF。
 
-A few resources to get you started if this is your first Flutter project:
+## 开发
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+npm install
+npm run dev
+npm run test
+npm run build
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+部署到 Family Apps 时使用工作区脚本：
+
+```bash
+../.agents/skills/family-apps-deploy/scripts/deploy.sh math-sheet
+```

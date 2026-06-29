@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="算术题打印">
+  <rect width="64" height="64" rx="14" fill="#1f7a8c"/>
+  <path d="M19 14h26a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H19a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4Z" fill="#ffffff"/>
+  <path d="M23 25h18M23 34h18M23 43h10" stroke="#15212a" stroke-width="4" stroke-linecap="round"/>
+  <path d="M22 18h20" stroke="#f0b44c" stroke-width="4" stroke-linecap="round"/>
+</svg>
