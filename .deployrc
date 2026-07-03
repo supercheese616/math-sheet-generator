@@ -1,0 +1,2 @@
+# family-apps 部署配置（scripts/deploy.sh 自动读取；随 git 提交）
+APP=math-sheet
