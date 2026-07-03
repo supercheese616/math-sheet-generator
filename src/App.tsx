@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   FileText,
   MinusCircle,
@@ -7,6 +7,7 @@ import {
   RefreshCcw,
   Rows3,
   SlidersHorizontal,
+  TriangleAlert,
 } from "lucide-react";
 import {
   clampProblemCount,
@@ -25,11 +26,13 @@ const initialGenerator = generators[0];
 const initialCount = itemsPerPage;
 const defaultSettings: SheetSettings = {
   fontSize: 32,
-  rowGap: 32,
+  // 24px：45 题 + 标题恰好放进一页 A4（32px 时页高 1212px > 1123px，打印会溢出）
+  rowGap: 24,
   includeAnswerKey: false,
   showUnderline: true,
 };
 const previewBaseWidth = 794;
+const previewBaseHeight = 1123; // A4 @96dpi 设计高度，.sheet-preview 的 min-height 与打印页基准
 
 const getPreviewScale = () => {
   if (typeof window === "undefined") return 1;
@@ -43,6 +46,8 @@ function App() {
   const [settings, setSettings] = useState<SheetSettings>(defaultSettings);
   const [problems, setProblems] = useState(() => createProblems(initialGenerator, initialCount));
   const [previewScale, setPreviewScale] = useState(getPreviewScale);
+  const [overflowing, setOverflowing] = useState(false);
+  const sheetStackRef = useRef<HTMLDivElement>(null);
 
   const pages = useMemo(() => splitIntoPages(problems), [problems]);
   const displaySheets = useMemo(() => {
@@ -59,6 +64,17 @@ function App() {
     window.addEventListener("resize", updateScale);
     return () => window.removeEventListener("resize", updateScale);
   }, []);
+
+  // .sheet-preview 是 min-height 1123px：字号/行距调大后内容会把页面撑高到超过 A4，
+  // 屏幕上看不出问题，打印时却会溢出到额外纸张、页码与实际张数不符。量渲染结果给出预警。
+  useLayoutEffect(() => {
+    const stack = sheetStackRef.current;
+    if (!stack) return;
+    const sheets = stack.querySelectorAll(".sheet-preview");
+    setOverflowing(
+      Array.from(sheets).some((el) => Math.max(el.scrollHeight, el.clientHeight) > previewBaseHeight + 1),
+    );
+  }, [displaySheets, settings, previewScale]);
 
   const updateCount = (nextCount: number) => {
     const normalized = clampProblemCount(nextCount);
@@ -243,10 +259,16 @@ function App() {
                 {pages.length} 页题目
                 {settings.includeAnswerKey ? ` + ${pages.length} 页参考答案` : ""}，每页 {itemsPerPage} 题。
               </p>
+              {overflowing && (
+                <p className="overflow-warning" role="alert">
+                  <TriangleAlert size={16} aria-hidden="true" />
+                  当前字号/行间距下一页放不下 {itemsPerPage} 题（已超出 A4 高度）：打印会溢出到额外纸张、页码不准。请调小字号或行间距。
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="sheet-stack">
+          <div className="sheet-stack" ref={sheetStackRef}>
             {displaySheets.map((sheet, index) => (
               <div
                 key={`${sheet.answer ? "answer" : "question"}-${index}`}
@@ -255,7 +277,7 @@ function App() {
                   {
                     "--preview-scale": previewScale,
                     width: `${previewBaseWidth * previewScale}px`,
-                    height: `${1123 * previewScale}px`,
+                    height: `${previewBaseHeight * previewScale}px`,
                   } as CSSProperties
                 }
               >
