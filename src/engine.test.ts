@@ -55,6 +55,16 @@ describe("一年级题型", () => {
     }
   });
 
+  it("带 0 的题只占少数（教材里偶尔出现即可）", () => {
+    const zeroish = (id: string) =>
+      eqSample(id, 1000).filter((p) => p.terms.includes(0) || p.answer === 0).length / 1000;
+    expect(zeroish("add-10")).toBeLessThan(0.2);
+    expect(zeroish("add-10")).toBeGreaterThan(0);
+    expect(zeroish("sub-10")).toBeLessThan(0.2);
+    expect(zeroish("sub-10")).toBeGreaterThan(0);
+    expect(zeroish("add-20-nocarry")).toBeLessThan(0.15);
+  });
+
   it("20以内不进位加法：十几加几，个位不进位", () => {
     for (const p of eqSample("add-20-nocarry")) {
       const [big, small] = p.terms[0] >= 10 ? p.terms : [p.terms[1], p.terms[0]];

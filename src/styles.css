@@ -692,6 +692,24 @@ button {
   white-space: nowrap;
 }
 
+/* 求未知数/有余数除法的书写框：CSS 画框代替太小的 □ 字形。
+   高 0.85em + 下沉 0.08em，始终低于行框上缘（1.15 行高），不影响 layout.ts 的行高计算 */
+.problem-text .write-box {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin: 0 0.1em;
+  border: 0.07em solid #111827;
+  border-radius: 0.09em;
+  vertical-align: -0.08em;
+}
+
+/* 比大小的圈稍放大便于孩子填写；line-height 收紧避免撑高行框 */
+.problem-text .cmp-mark {
+  font-size: 1.12em;
+  line-height: 1;
+}
+
 /* 答题横线：弹性填满本列剩余宽度，最长 2.6em，绝不挤出列外 */
 .answer-line {
   display: inline-block;

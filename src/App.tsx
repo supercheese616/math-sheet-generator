@@ -518,6 +518,28 @@ function SheetHeader({ title, withMeta }: { title: string; withMeta: boolean }) 
   );
 }
 
+/**
+ * 题面渲染：□ 用 CSS 画成足够大的书写框（字形太小孩子没法写），
+ * ○ 稍微放大便于填写 > < =。字符串本身仍来自 questionTextOf（答案/去重/测试共用）。
+ */
+function ProblemText({ text }: { text: string }) {
+  return (
+    <span className="problem-text">
+      {text.split(/([□○])/).map((token, index) =>
+        token === "□" ? (
+          <span key={index} className="write-box" />
+        ) : token === "○" ? (
+          <span key={index} className="cmp-mark">
+            ○
+          </span>
+        ) : (
+          token
+        ),
+      )}
+    </span>
+  );
+}
+
 function QuestionSheet({
   title,
   problems,
@@ -556,7 +578,7 @@ function QuestionSheet({
         {problems.map((problem, index) => (
           <div className="problem-item" key={`${startIndex + index}-${questionTextOf(problem)}`}>
             {numbered && <span className="problem-no">{startIndex + index + 1}.</span>}
-            <span className="problem-text">{questionTextOf(problem)}</span>
+            <ProblemText text={questionTextOf(problem)} />
             {underline && isStandardEq(problem) && <span className="answer-line" />}
           </div>
         ))}

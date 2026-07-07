@@ -75,9 +75,10 @@ export const presets: Preset[] = [
     supportsBlank: true,
     supportsCompare: true,
     generate: (rng) => {
-      const a = int(rng, 0, 10);
-      const b = a === 0 ? int(rng, 1, 10) : int(rng, 0, 10 - a);
-      return eq([a, b], ["+"]);
+      // +0 的题教材里只偶尔出现，控制在 ~10%
+      if (rng() < 0.1) return eq(swap(rng, int(rng, 1, 10), 0), ["+"]);
+      const a = int(rng, 1, 9);
+      return eq([a, int(rng, 1, 10 - a)], ["+"]);
     },
   },
   {
@@ -89,8 +90,13 @@ export const presets: Preset[] = [
     supportsBlank: true,
     supportsCompare: true,
     generate: (rng) => {
-      const a = int(rng, 1, 10);
-      return eq([a, int(rng, 0, a)], ["-"]);
+      // -0 和得 0 的题控制在 ~12%，其余保证减数与差都非零
+      if (rng() < 0.12) {
+        const a = int(rng, 1, 10);
+        return eq([a, rng() < 0.5 ? 0 : a], ["-"]);
+      }
+      const a = int(rng, 2, 10);
+      return eq([a, int(rng, 1, a - 1)], ["-"]);
     },
   },
   {
@@ -102,8 +108,10 @@ export const presets: Preset[] = [
     supportsBlank: true,
     supportsCompare: true,
     generate: (rng) => {
-      const ones = int(rng, 0, 9);
-      const [a, b] = swap(rng, 10 + ones, int(rng, 0, 9 - ones));
+      // +0 控制在 ~8%；其余加数非零且不进位
+      const zeroish = rng() < 0.08;
+      const ones = int(rng, 0, zeroish ? 9 : 8);
+      const [a, b] = swap(rng, 10 + ones, zeroish ? 0 : int(rng, 1, 9 - ones));
       return eq([a, b], ["+"]);
     },
   },
