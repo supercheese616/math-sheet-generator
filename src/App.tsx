@@ -519,8 +519,8 @@ function SheetHeader({ title, withMeta }: { title: string; withMeta: boolean }) 
 }
 
 /**
- * 题面渲染：□ 用 CSS 画成足够大的书写框（字形太小孩子没法写），
- * ○ 稍微放大便于填写 > < =。字符串本身仍来自 questionTextOf（答案/去重/测试共用）。
+ * 题面渲染：□ 和 ○ 的字形都太小孩子没法往里写，
+ * 统一用 CSS 画成足够大的书写框/圈。字符串本身仍来自 questionTextOf（答案/去重/测试共用）。
  */
 function ProblemText({ text }: { text: string }) {
   return (
@@ -529,9 +529,7 @@ function ProblemText({ text }: { text: string }) {
         token === "□" ? (
           <span key={index} className="write-box" />
         ) : token === "○" ? (
-          <span key={index} className="cmp-mark">
-            ○
-          </span>
+          <span key={index} className="write-box cmp-circle" />
         ) : (
           token
         ),
