@@ -1,12 +1,12 @@
 {
-  "name": "算术题打印生成器",
-  "short_name": "算术题打印",
-  "description": "为家庭练习快速生成 A4 口算题和参考答案。",
+  "name": "口算工坊",
+  "short_name": "口算工坊",
+  "description": "按年级选题型、混合组卷，一键生成 A4 口算练习和参考答案，卷号可复现重印。",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f7f8",
-  "theme_color": "#1f7a8c",
+  "background_color": "#f6f0e3",
+  "theme_color": "#f6f0e3",
   "orientation": "any",
   "icons": [
     {
