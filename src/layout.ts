@@ -13,7 +13,8 @@ const TITLE_BLOCK = 100;
 // .problem-item 的 line-height，改 CSS 时必须同步这里
 const LINE_HEIGHT = 1.15;
 
-export const FONT_SIZES: Record<SizeKey, number> = { s: 22, m: 27, l: 32 };
+// 中 30px：标准行距下恰好 15 行 × 3 列 = 45 题/页（经典口算卷密度）
+export const FONT_SIZES: Record<SizeKey, number> = { s: 24, m: 30, l: 36 };
 export const GAP_FACTORS: Record<GapKey, number> = { compact: 0.5, normal: 0.8, loose: 1.2 };
 
 export type SheetLayout = {
@@ -32,7 +33,7 @@ export type SheetLayout = {
  */
 const COLUMN_CAPS: Record<PresetWidth, Record<"std" | "wide", Record<SizeKey, number>>> = {
   short: { std: { s: 4, m: 4, l: 3 }, wide: { s: 4, m: 3, l: 3 } },
-  medium: { std: { s: 4, m: 4, l: 3 }, wide: { s: 4, m: 3, l: 2 } },
+  medium: { std: { s: 4, m: 3, l: 3 }, wide: { s: 3, m: 3, l: 2 } },
   long: { std: { s: 3, m: 3, l: 2 }, wide: { s: 3, m: 2, l: 2 } },
   xlong: { std: { s: 3, m: 2, l: 2 }, wide: { s: 3, m: 2, l: 2 } },
 };
@@ -42,13 +43,20 @@ export const maxColumnsFor = (selected: Preset[], size: SizeKey, form: ProblemFo
   return selected.reduce((cap, preset) => Math.min(cap, COLUMN_CAPS[preset.width][variant][size]), 4);
 };
 
-/** 纵向自动排版：由字号/行距算出一页能放几行，每页题数 = 行数 × 列数，永不溢出。 */
+/**
+ * 纵向自动排版：由字号/行距算出一页能放几行，每页题数 = 行数 × 列数，永不溢出。
+ * 行数确定后把剩余空隙均摊进行距（上限 +12px），版心贴到可用区底部，减少页底留白。
+ */
 export const layoutFor = (settings: SheetSettings, selected: Preset[], form: ProblemForm): SheetLayout => {
   const fontSize = FONT_SIZES[settings.fontSize];
-  const rowGap = Math.round(fontSize * GAP_FACTORS[settings.rowGap]);
+  const nominalGap = Math.round(fontSize * GAP_FACTORS[settings.rowGap]);
   const rowHeight = Math.ceil(fontSize * LINE_HEIGHT);
   const available = PAGE_HEIGHT - PAGE_PADDING * 2 - TITLE_BLOCK;
-  const rows = Math.max(1, Math.floor((available + rowGap) / (rowHeight + rowGap)));
+  const rows = Math.max(1, Math.floor((available + nominalGap) / (rowHeight + nominalGap)));
+  const rowGap =
+    rows > 1
+      ? Math.floor(Math.min(nominalGap + 12, (available - rows * rowHeight) / (rows - 1)) * 100) / 100
+      : 0;
   const columns = Math.min(settings.columns, maxColumnsFor(selected, settings.fontSize, form));
   return { fontSize, rowGap, rows, columns, perPage: rows * columns };
 };

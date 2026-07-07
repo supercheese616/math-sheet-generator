@@ -284,15 +284,24 @@ describe("自动排版", () => {
     seed: "TEST",
   };
 
-  it("每页题数为正且行高计算不超出可用高度", () => {
+  it("中字号 + 标准行距 + 3 列 = 经典的 45 题/页", () => {
+    const layout = layoutFor(baseSettings, [preset("add-20-carry")], "standard");
+    expect(layout.rows).toBe(15);
+    expect(layout.columns).toBe(3);
+    expect(layout.perPage).toBe(45);
+  });
+
+  it("每页题数为正、行距伸展后仍不超出可用高度", () => {
     for (const fontSize of ["s", "m", "l"] as const) {
       for (const rowGap of ["compact", "normal", "loose"] as const) {
         const layout = layoutFor({ ...baseSettings, fontSize, rowGap }, [preset("add-20-carry")], "standard");
         expect(layout.perPage).toBeGreaterThan(0);
         const rowHeight = Math.ceil(FONT_SIZES[fontSize] * 1.15);
-        const gap = Math.round(FONT_SIZES[fontSize] * GAP_FACTORS[rowGap]);
-        const contentHeight = layout.rows * rowHeight + (layout.rows - 1) * gap;
-        expect(contentHeight).toBeLessThanOrEqual(1123 - 112 - 100);
+        const nominalGap = Math.round(FONT_SIZES[fontSize] * GAP_FACTORS[rowGap]);
+        // 伸展后的行距不小于名义行距（吃掉页底留白），且总高仍在可用区内
+        expect(layout.rowGap).toBeGreaterThanOrEqual(nominalGap);
+        const contentHeight = layout.rows * rowHeight + (layout.rows - 1) * layout.rowGap;
+        expect(contentHeight).toBeLessThanOrEqual(1123 - 112 - 100 + 0.01);
       }
     }
   });
@@ -300,8 +309,10 @@ describe("自动排版", () => {
   it("宽算式、大字号与宽形式限制列数", () => {
     expect(maxColumnsFor([preset("add-20-carry")], "m", "standard")).toBe(4);
     expect(maxColumnsFor([preset("add-20-carry")], "l", "standard")).toBe(3);
-    // 比大小/求未知数题面更宽：100以内 中字号从 4 列降到 3 列
-    expect(maxColumnsFor([preset("add-100-carry")], "m", "standard")).toBe(4);
+    // 100以内（medium）：中字号标准形式 3 列；比大小/求未知数更宽，小字号也降到 3 列
+    expect(maxColumnsFor([preset("add-100-carry")], "s", "standard")).toBe(4);
+    expect(maxColumnsFor([preset("add-100-carry")], "m", "standard")).toBe(3);
+    expect(maxColumnsFor([preset("add-100-carry")], "s", "compare")).toBe(3);
     expect(maxColumnsFor([preset("add-100-carry")], "m", "compare")).toBe(3);
     expect(maxColumnsFor([preset("add-100-carry")], "l", "compare")).toBe(2);
     // 有余数除法（xlong）：中字号最多 2 列
